@@ -16,6 +16,7 @@ class ApiHandler(tornado.web.RequestHandler):
         self.sdb_connection = sdb_connection
 
     def post(self):
+        print "POST request"
         data = self.request.body
         print data
         json_data = json.loads(data)
@@ -32,6 +33,7 @@ class ApiHandler(tornado.web.RequestHandler):
             self.set_status(status.HTTP_400_BAD_REQUEST)
 
     def data_put(self, json_data):
+        print "Method data.put"
         del json_data["method"]
         json_data["time"] = int(time.time())
         meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
