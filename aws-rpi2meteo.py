@@ -11,14 +11,15 @@ import boto.sdb
 import boto.compat
 
 import web_application
-
-
-def load_config():
-    pass
+import aws_config
 
 
 def connect_to_database():
-    return boto.sdb.connect_to_region('us-west-2')
+    connection = boto.sdb.connect_to_region(aws_config.REGION)
+    for domain_name in aws_config.SDB_DOMAINS:
+        connection.create_domain(domain_name)
+
+    return connection
 
 
 def start_web_server(sdb_connection):
@@ -32,7 +33,6 @@ def start_web_server(sdb_connection):
 
 
 def main():
-    load_config()
     sdb_connection = connect_to_database()
     start_web_server(sdb_connection)
 
