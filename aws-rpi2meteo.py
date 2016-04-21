@@ -1,5 +1,8 @@
+#!/usr/bin/python2.7
 # 2016 (C) Valentin Lukyanets
 
+
+import sys
 
 import tornado
 import tornado.options
@@ -39,3 +42,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    sys.exit()
