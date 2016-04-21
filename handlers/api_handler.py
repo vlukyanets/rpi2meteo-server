@@ -40,7 +40,7 @@ class ApiHandler(tornado.web.RequestHandler):
         rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
 
         try:
-            meteodata_domain_key = "-".join([json_data["time"], json_data["device_id"]])
+            meteodata_domain_key = "-".join([str(json_data["time"]), json_data["device_id"]])
             print meteodata_domain_key
             meteodata_domain.put_attributes(meteodata_domain_key, json_data)
             last_time_for_device = rpi_lasttime_domain.get_item(json_data["device_id"])
@@ -59,4 +59,4 @@ class ApiHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def invalid_method(json_data):
-        pass
+        return False
