@@ -17,18 +17,24 @@ class ApiHandler(tornado.web.RequestHandler):
 
     def post(self):
         data = self.request.body
-        json_data = json.loads(data)
+        try:
+            json_data = json.loads(data)
+        except ValueError:
+            self.set_status(status.HTTP_400_BAD_REQUEST)
+            return
 
         api_method_table = {
             "data.put": self.data_put
         }
 
-        method = api_method_table.get(json_data["method"], self.invalid_method)
+        method = api_method_table.get(json_data.get("method", None), self.invalid_method)
         return_code = method(json_data)
         self.set_status(return_code)
 
     def data_put(self, json_data):
-        device_id = json_data["device_id"]
+        device_id = json_data.get("device_id", None)
+        if device_id is None:
+            return status.HTTP_400_BAD_REQUEST
         devices_domain = self.sdb_connection.get_domain(aws_config.DEVICES_DOMAIN)
         device_item = devices_domain.get_item(device_id)
         if device_item is None:
@@ -43,10 +49,8 @@ class ApiHandler(tornado.web.RequestHandler):
 
         try:
             meteodata_domain_key = "-".join([str(json_data["time"]), device_id])
-            print meteodata_domain_key
             meteodata_domain.put_attributes(meteodata_domain_key, json_data)
             last_time_for_device = rpi_lasttime_domain.get_item(device_id)
-            print last_time_for_device
             if last_time_for_device is not None:
                 last_time_for_device["time"] = json_data["time"]
                 last_time_for_device.save()
@@ -55,10 +59,10 @@ class ApiHandler(tornado.web.RequestHandler):
                 rpi_lasttime_domain.put_attributes(device_id, last_time_for_device)
 
         except (BotoServerError, SDBResponseError):
-            return status.HTTP_400_BAD_REQUEST
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
         else:
             return status.HTTP_200_OK
 
     @staticmethod
     def invalid_method(json_data):
-        return False
+        return status.HTTP_400_BAD_REQUEST

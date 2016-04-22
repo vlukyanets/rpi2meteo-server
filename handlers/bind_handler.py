@@ -4,6 +4,10 @@
 import tornado.web
 
 import aws_config
+import re
+
+
+RE_DEVICE_ID = re.compile(r'[0-9a-f]{32}')
 
 
 class BindHandler(tornado.web.RequestHandler):
@@ -19,6 +23,9 @@ class BindHandler(tornado.web.RequestHandler):
         email = self.get_argument("email", default=None)
         if (device_id is None) or (email is None) or (device_id == "") or (email == ""):
             self.render("bind.html", error="Not specified 'Device ID' or 'E-mail'")
+
+        if not RE_DEVICE_ID.match(device_id):
+            self.render("bind.html", error="Invalid 'Device ID'")
 
         item = self.devices_domain.get_item(device_id)
         if item is not None:
