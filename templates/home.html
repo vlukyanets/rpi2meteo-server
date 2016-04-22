@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RPI2-meteo</title>
+    <style>
+        #gmap {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script type="text/javascript">
+        function onPageLoad() {
+            var map = initMap();
+            var content = loadContent("/api");
+            console.log(content);
+            if (content.length != 0) {
+                for (var i = 0; i < content.length; i++) {
+                    addMarker(map, content[i]);
+                }
+            }
+        }
+    </script>
+    <script type="text/javascript" src="google_maps_api_wrapper.js"></script>
+</head>
+<body>
+    <div id="gmap"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?callback=onPageLoad"
+        async defer></script>
+</body>
+</html>

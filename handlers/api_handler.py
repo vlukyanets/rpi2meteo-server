@@ -15,6 +15,22 @@ class ApiHandler(tornado.web.RequestHandler):
     def initialize(self, sdb_connection):
         self.sdb_connection = sdb_connection
 
+    def get(self):
+        try:
+            content = []
+            devices_domain = self.sdb_connection.get_domain(aws_config.DEVICES_DOMAIN)
+            rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
+            meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
+            for device_item in devices_domain:
+                if str(device_item["enabled"]) == 'True':
+                    rpi_lasttime_item = rpi_lasttime_domain.get_item(device_item.name)
+                    meteodata_key = "-".join([rpi_lasttime_item["time"], device_item.name])
+                    content.append(meteodata_domain.get_item(meteodata_key))
+            self.write(content)
+            self.set_status(status.HTTP_200_OK);
+        except (BotoServerError, SDBResponseError):
+            self.set_status(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def post(self):
         data = self.request.body
         try:
@@ -31,6 +47,20 @@ class ApiHandler(tornado.web.RequestHandler):
         return_code = method(json_data)
         self.set_status(return_code)
 
+    @staticmethod
+    def __validate_sensors_data(sensors_data):
+        if "Geolocation" not in sensors_data:
+            return False
+
+        if len(sensors_data) <= 2:
+            return False
+
+        for sensors_data_key in sensors_data:
+            if not (isinstance(sensors_data_key, basestring) and isinstance(sensors_data[sensors_data_key], list)):
+                return False
+
+        return True
+
     def data_put(self, json_data):
         device_id = json_data.get("device_id", None)
         if device_id is None:
@@ -42,13 +72,17 @@ class ApiHandler(tornado.web.RequestHandler):
         if str(device_item["enabled"]) != 'True':
             return status.HTTP_403_FORBIDDEN
 
+        sensors_data = json_data.get("sensors", None)
+        if (sensors_data is None) or (not self.__validate_sensors_data(sensors_data)):
+            return status.HTTP_400_BAD_REQUEST
+
         del json_data["method"]
-        json_data["time"] = int(time.time())
+        json_data["time"] = str(int(time.time()))
         meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
         rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
 
         try:
-            meteodata_domain_key = "-".join([str(json_data["time"]), device_id])
+            meteodata_domain_key = "-".join([json_data["time"], device_id])
             meteodata_domain.put_attributes(meteodata_domain_key, json_data)
             last_time_for_device = rpi_lasttime_domain.get_item(device_id)
             if last_time_for_device is not None:

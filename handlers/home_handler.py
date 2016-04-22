@@ -10,4 +10,4 @@ class HomeHandler(tornado.web.RequestHandler):
         self.sdb_connection = sdb_connection
 
     def get(self):
-        self.set_status(status.HTTP_404_NOT_FOUND)
+        self.render("home.html");
