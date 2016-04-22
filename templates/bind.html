@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bind your meteo-rpi</title>
+</head>
+<body>
+    <h1>{{ error }}</h1>
+    Bind your Raspberry Pi-based meteostation to cloud! :)<br>
+    <form method="post" action="/bind">
+        * Device ID: <input type="text" name="device_id"><br>
+        * E-mail: <input type="text" name="email"><br>
+        <input type="submit" value="Bind!">
+    </form>
+    * - required<br>
+</body>
+</html>

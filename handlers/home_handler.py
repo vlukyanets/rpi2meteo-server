@@ -2,7 +2,7 @@
 
 
 import tornado.web
-
+import status
 
 class HomeHandler(tornado.web.RequestHandler):
 
@@ -10,4 +10,4 @@ class HomeHandler(tornado.web.RequestHandler):
         self.sdb_connection = sdb_connection
 
     def get(self):
-        pass
+        self.set_status(status.HTTP_404_NOT_FOUND)
