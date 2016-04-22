@@ -33,7 +33,7 @@ class ApiHandler(tornado.web.RequestHandler):
         device_item = devices_domain.get_item(device_id)
         if device_item is None:
             return status.HTTP_401_UNAUTHORIZED
-        if not device_item["enabled"]:
+        if str(device_item["enabled"]) != 'True':
             return status.HTTP_403_FORBIDDEN
 
         del json_data["method"]

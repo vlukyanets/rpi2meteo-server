@@ -24,5 +24,5 @@ class BindHandler(tornado.web.RequestHandler):
         if item is not None:
             self.render("bind.html", error="Device ID %s already exists" % device_id)
 
-        self.devices_domain.put_attributes(device_id, {"enabled": True})
+        self.devices_domain.put_attributes(device_id, {"enabled": True, "owner": email})
         self.redirect("/")
