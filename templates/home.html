@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <title>RPI2-meteo</title>
     <style>
+        body, html {
+            height: 100%;
+        }
         #gmap {
             width: 100%;
-            height: 100%;
+            height: 95%;
         }
     </style>
     <script type="text/javascript">
@@ -14,6 +17,7 @@
             var map = initMap();
             var content = loadContent("/api");
             console.log(content);
+            console.log(content.length);
             if (content.length != 0) {
                 for (var i = 0; i < content.length; i++) {
                     addMarker(map, content[i]);
@@ -21,7 +25,7 @@
             }
         }
     </script>
-    <script type="text/javascript" src="google_maps_api_wrapper.js"></script>
+    <script type="text/javascript" src="/static/google_maps_api_wrapper.js"></script>
 </head>
 <body>
     <header>
@@ -31,7 +35,7 @@
     <footer>
         Valentin Lukyanets, Alexander Nesterenko (C) 2016
     </footer>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=onPageLoad"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsEXXK_ndKxp5cUK03m__88lhqORNK_zQ&callback=onPageLoad"
         async defer></script>
 </body>
 </html>

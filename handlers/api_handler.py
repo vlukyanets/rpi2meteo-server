@@ -22,11 +22,22 @@ class ApiHandler(tornado.web.RequestHandler):
             rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
             meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
             for device_item in devices_domain:
+                print device_item.name, device_item
                 if str(device_item["enabled"]) == 'True':
                     rpi_lasttime_item = rpi_lasttime_domain.get_item(device_item.name)
+                    print rpi_lasttime_item.name, rpi_lasttime_item
                     meteodata_key = "-".join([rpi_lasttime_item["time"], device_item.name])
-                    content.append(meteodata_domain.get_item(meteodata_key))
-            self.write(content)
+                    print meteodata_key
+                    item = meteodata_domain.get_item(meteodata_key)
+                    parsed_data = json.loads(item["json_data"])
+                    print parsed_data
+                    content.append(parsed_data)
+            content_str = json.dumps(content)
+            print content
+            print content_str
+            new_content = json.loads(content_str)
+            print new_content[0]["sensors"]["Geolocation"]
+            self.write(content_str)
             self.set_status(status.HTTP_200_OK);
         except (BotoServerError, SDBResponseError):
             self.set_status(status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -35,6 +46,8 @@ class ApiHandler(tornado.web.RequestHandler):
         data = self.request.body
         try:
             json_data = json.loads(data)
+            print data
+            print json_data
         except ValueError:
             self.set_status(status.HTTP_400_BAD_REQUEST)
             return
@@ -77,13 +90,13 @@ class ApiHandler(tornado.web.RequestHandler):
             return status.HTTP_400_BAD_REQUEST
 
         del json_data["method"]
-        json_data["time"] = str(int(time.time()))
+        json_data["time"] = int(time.time())
         meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
         rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
 
         try:
-            meteodata_domain_key = "-".join([json_data["time"], device_id])
-            meteodata_domain.put_attributes(meteodata_domain_key, json_data)
+            meteodata_domain_key = "-".join([str(json_data["time"]), device_id])
+            meteodata_domain.put_attributes(meteodata_domain_key, {"json_data": json.dumps(json_data)})
             last_time_for_device = rpi_lasttime_domain.get_item(device_id)
             if last_time_for_device is not None:
                 last_time_for_device["time"] = json_data["time"]
