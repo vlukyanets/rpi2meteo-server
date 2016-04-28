@@ -98,8 +98,7 @@ function dumpContentToTable(_content, _tableName) {
         if (_content.hasOwnProperty(content_item_num)) {
             var content_item = _content[content_item_num];
             var sensors = content_item["sensors"];
-            tableElement.innerHTML += "<tr>";
-            tableElement.innerHTML += "<td>";
+            tableElement.innerHTML += "<tr><td>";
             tableElement.innerHTML += timestampToUtcStr(content_item["time"]);
             tableElement.innerHTML += "</td><td>";
             for (var sensor_name in sensors) {
@@ -111,7 +110,7 @@ function dumpContentToTable(_content, _tableName) {
                     tableElement.innerHTML += sensors[sensor_name][1];
                 }
             }
-            _tableName.innerHTML += "</td>";
+            _tableName.innerHTML += "</td></tr>";
         }
     }
     tableElement.innerHTML += '</table>';
