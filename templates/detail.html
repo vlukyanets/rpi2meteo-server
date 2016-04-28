@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <title>RPI2-meteo detail view</title>
     <script type="text/javascript">
-        function onPageLoad(device_id) {
+        function onPageLoad(device_id, table_name) {
             var content = loadContent("/api/" + device_id);
             console.log(content);
             console.log(content.length);
+            dumpContentToTable(content, table_name);
         }
     </script>
     <script type="text/javascript" src="/static/google_maps_api_wrapper.js"></script>
 </head>
-<body onload="onPageLoad('{{ device_id }}');">
+<body onload="onPageLoad('{{ device_id }}', 'history_table');">
     <h1>History of device {{ device_id }}</h1>
     <table id="history_table"></table>
 </body>

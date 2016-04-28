@@ -12,7 +12,7 @@ function initMap() {
 
 
 function getPosition(_data) {
-    raw_position_object = _data['sensors']['Geolocation'][0];
+    var raw_position_object = _data['sensors']['Geolocation'][0];
     _data['sensors']['Geolocation'][0] = new google.maps.LatLng(
         raw_position_object.lat, raw_position_object.lng
     );
@@ -87,5 +87,44 @@ function loadContent(_url) {
     } else {
         console.log(request.responseText);
         return JSON.parse(request.responseText);
+    }
+}
+
+
+function dumpContentToTable(_content, _tableName) {
+    var tableElement = document.getElementById(_tableName);
+    for (var content_item in _content) {
+        if (_content.hasOwnProperty(content_item)) {
+            var sensors = content_item["sensors"];
+            tableElement.innerHTML += "<tr>";
+            tableElement.innerHTML += "<td>";
+            tableElement.innerHTML += timestampToUtcStr(content_item["time"]);
+            tableElement.innerHTML += "</td><td>";
+            for (var sensor_name in sensors) {
+                if (sensors.hasOwnProperty(sensor_name)) {
+                    tableElement.innerHTML += sensor_name;
+                    tableElement.innerHTML += ": ";
+                    tableElement.innerHTML += presentationOf(sensors[sensor_name][0]);
+                    tableElement.innerHTML += " ";
+                    tableElement.innerHTML += sensors[sensor_name][1];
+                }
+            }
+            _tableName.innerHTML += "</td>";
+        }
+    }
+}
+
+
+function presentationOf(_data) {
+    if (typeof _data == 'object') {
+        var s = "(";
+        for (var subitem in _data) {
+            s += _data[subitem];
+            s += ";";
+        }
+        s += ")";
+        return s;
+    } else {
+        return _data;
     }
 }
