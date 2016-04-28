@@ -93,8 +93,9 @@ function loadContent(_url) {
 
 function dumpContentToTable(_content, _tableName) {
     var tableElement = document.getElementById(_tableName);
-    for (var content_item in _content) {
-        if (_content.hasOwnProperty(content_item)) {
+    for (var content_item_num in _content) {
+        if (_content.hasOwnProperty(content_item_num)) {
+            var content_item = _content[content_item_num];
             var sensors = content_item["sensors"];
             tableElement.innerHTML += "<tr>";
             tableElement.innerHTML += "<td>";
