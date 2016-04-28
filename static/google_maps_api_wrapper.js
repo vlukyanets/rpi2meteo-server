@@ -92,28 +92,30 @@ function loadContent(_url) {
 
 
 function dumpContentToTable(_content, _tableName) {
-    var tableElement = document.getElementById(_tableName);
-    tableElement.innerHTML += '<table border=1 width=100%>';
+    var tableHtml = '<table border=1 width=100%>';
     for (var content_item_num in _content) {
         if (_content.hasOwnProperty(content_item_num)) {
             var content_item = _content[content_item_num];
             var sensors = content_item["sensors"];
-            tableElement.innerHTML += "<tr><td>";
-            tableElement.innerHTML += timestampToUtcStr(content_item["time"]);
-            tableElement.innerHTML += "</td><td>";
+            tableHtml += "<tr><td>";
+            tableHtml += timestampToUtcStr(content_item["time"]);
+            tableHtml += "</td><td>";
             for (var sensor_name in sensors) {
                 if (sensors.hasOwnProperty(sensor_name)) {
-                    tableElement.innerHTML += sensor_name;
-                    tableElement.innerHTML += ": ";
-                    tableElement.innerHTML += presentationOf(sensors[sensor_name][0]);
-                    tableElement.innerHTML += " ";
-                    tableElement.innerHTML += sensors[sensor_name][1];
+                    tableHtml += sensor_name;
+                    tableHtml += ": ";
+                    tableHtml += presentationOf(sensors[sensor_name][0]);
+                    tableHtml += " ";
+                    tableHtml += sensors[sensor_name][1];
                 }
             }
-            _tableName.innerHTML += "</td></tr>";
+            tableHtml += "</td></tr>";
         }
     }
-    tableElement.innerHTML += '</table>';
+    tableHtml += '</table>';
+
+    var tableElement = document.getElementById(_tableName)
+    tableElement.innerHTML = tableHtml;
 }
 
 
