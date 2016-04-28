@@ -93,6 +93,7 @@ function loadContent(_url) {
 
 function dumpContentToTable(_content, _tableName) {
     var tableElement = document.getElementById(_tableName);
+    tableElement.innerHTML += '<table border=1 width=100%>';
     for (var content_item_num in _content) {
         if (_content.hasOwnProperty(content_item_num)) {
             var content_item = _content[content_item_num];
@@ -113,6 +114,7 @@ function dumpContentToTable(_content, _tableName) {
             _tableName.innerHTML += "</td>";
         }
     }
+    tableElement.innerHTML += '</table>';
 }
 
 
