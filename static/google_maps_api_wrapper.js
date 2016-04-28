@@ -115,7 +115,7 @@ function dumpContentToTable(_content, _tableName) {
     }
     tableHtml += '</table>';
 
-    var tableElement = document.getElementById(_tableName)
+    var tableElement = document.getElementById(_tableName);
     tableElement.innerHTML = tableHtml;
 }
 
