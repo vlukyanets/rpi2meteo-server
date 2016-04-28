@@ -107,6 +107,7 @@ function dumpContentToTable(_content, _tableName) {
                     tableHtml += presentationOf(sensors[sensor_name][0]);
                     tableHtml += " ";
                     tableHtml += sensors[sensor_name][1];
+                    tableHtml += ";  ";
                 }
             }
             tableHtml += "</td></tr>";
