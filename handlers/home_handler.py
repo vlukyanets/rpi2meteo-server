@@ -2,12 +2,16 @@
 
 
 import tornado.web
-import status
+
 
 class HomeHandler(tornado.web.RequestHandler):
 
-    def initialize(self, sdb_connection):
-        self.sdb_connection = sdb_connection
-
     def get(self):
         self.render("home.html");
+
+
+class DetailHandler(tornado.web.RequestHandler):
+
+    def get(self, *args, **kwargs):
+        device_id = args[0]
+        self.render("detail.html", device_id=device_id)

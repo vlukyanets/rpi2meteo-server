@@ -50,7 +50,7 @@ function makeContent(_data) {
     content += timestampToUtcStr(_data['time']);
     content += "<br>";
     content += "Watch history: ";
-    content += '<a href="/api/' + _data['device_id'] + '">link</a>';
+    content += '<a href="/device/' + _data['device_id'] + '">link</a>';
     content += "</div>";
     return content;
 }

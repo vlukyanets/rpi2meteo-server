@@ -4,14 +4,15 @@
 import tornado.web
 import os.path
 
-from handlers import HomeHandler, ApiHandler, BindHandler, DetailApiHandler
+from handlers import HomeHandler, ApiHandler, BindHandler, DetailApiHandler, DetailHandler
 
 
 class Application(tornado.web.Application):
 
     def __init__(self, sdb_connection):
         handlers = [
-            (r"^/$", HomeHandler, dict(sdb_connection=sdb_connection)),
+            (r"^/$", HomeHandler),
+            (r"^/device/(\S+)", DetailHandler),
             (r"^/api$", ApiHandler, dict(sdb_connection=sdb_connection)),
             (r"^/bind$", BindHandler, dict(sdb_connection=sdb_connection)),
             (r"^/api/(\S+)", DetailApiHandler, dict(sdb_connection=sdb_connection)),
