@@ -21,9 +21,10 @@ class DetailApiHandler(tornado.web.RequestHandler):
             content = []
             meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
             for meteodata_item in meteodata_domain:
-                if meteodata_item["device_id"] == device_id:
-                    parsed_data = json.loads(meteodata_item["json_data"])
-                    content.append(parsed_data)
+                parsed_data = json.loads(meteodata_item["json_data"])
+                if parsed_data["device_id"] != device_id:
+                    continue
+                content.append(parsed_data)
             content_str = json.dumps(content)
             self.write(content_str)
             self.set_status(status.HTTP_200_OK)
