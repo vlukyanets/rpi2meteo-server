@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RPI2-meteo detail view</title>
+    <script type="text/javascript">
+        function onPageLoad() {
+            var content = loadContent("/api/{{ device_id }}");
+            console.log(content);
+            console.log(content.length);
+        }
+    </script>
+    <script type="text/javascript" src="/static/google_maps_api_wrapper.js"></script>
+</head>
+<body onload="onPageLoad();">
+    <h1>History of device {{ device_id }}</h1>
+    <table id="history_table"></table>
+</body>
+</html>

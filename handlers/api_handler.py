@@ -10,6 +10,27 @@ import status
 from boto.exception import BotoServerError, SDBResponseError
 
 
+class DetailApiHandler(tornado.web.RequestHandler):
+
+    def initialize(self, sdb_connection):
+        self.sdb_connection = sdb_connection
+
+    def get(self, *args, **kwargs):
+        try:
+            device_id = args[0]
+            content = []
+            meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
+            for meteodata_item in meteodata_domain:
+                if meteodata_item["device_id"] == device_id:
+                    parsed_data = json.loads(meteodata_item["json_data"])
+                    content.append(parsed_data)
+            content_str = json.dumps(content)
+            self.write(content_str)
+            self.set_status(status.HTTP_200_OK)
+        except (BotoServerError, SDBResponseError):
+            self.set_status(status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ApiHandler(tornado.web.RequestHandler):
 
     def initialize(self, sdb_connection):
@@ -22,23 +43,15 @@ class ApiHandler(tornado.web.RequestHandler):
             rpi_lasttime_domain = self.sdb_connection.get_domain(aws_config.RPI_LASTTIME_DOMAIN)
             meteodata_domain = self.sdb_connection.get_domain(aws_config.METEODATA_DOMAIN)
             for device_item in devices_domain:
-                print device_item.name, device_item
                 if str(device_item["enabled"]) == 'True':
                     rpi_lasttime_item = rpi_lasttime_domain.get_item(device_item.name)
-                    print rpi_lasttime_item.name, rpi_lasttime_item
                     meteodata_key = "-".join([rpi_lasttime_item["time"], device_item.name])
-                    print meteodata_key
                     item = meteodata_domain.get_item(meteodata_key)
                     parsed_data = json.loads(item["json_data"])
-                    print parsed_data
                     content.append(parsed_data)
             content_str = json.dumps(content)
-            print content
-            print content_str
-            new_content = json.loads(content_str)
-            print new_content[0]["sensors"]["Geolocation"]
             self.write(content_str)
-            self.set_status(status.HTTP_200_OK);
+            self.set_status(status.HTTP_200_OK)
         except (BotoServerError, SDBResponseError):
             self.set_status(status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -46,8 +59,6 @@ class ApiHandler(tornado.web.RequestHandler):
         data = self.request.body
         try:
             json_data = json.loads(data)
-            print data
-            print json_data
         except ValueError:
             self.set_status(status.HTTP_400_BAD_REQUEST)
             return

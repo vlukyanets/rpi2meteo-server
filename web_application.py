@@ -4,7 +4,7 @@
 import tornado.web
 import os.path
 
-from handlers import HomeHandler, ApiHandler, BindHandler
+from handlers import HomeHandler, ApiHandler, BindHandler, DetailApiHandler
 
 
 class Application(tornado.web.Application):
@@ -14,6 +14,7 @@ class Application(tornado.web.Application):
             (r"^/$", HomeHandler, dict(sdb_connection=sdb_connection)),
             (r"^/api$", ApiHandler, dict(sdb_connection=sdb_connection)),
             (r"^/bind$", BindHandler, dict(sdb_connection=sdb_connection)),
+            (r"^/api/(\S+)", DetailApiHandler, dict(sdb_connection=sdb_connection)),
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),

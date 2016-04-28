@@ -48,6 +48,9 @@ function makeContent(_data) {
     content += "</ul><br>";
     content += "Last update: ";
     content += timestampToUtcStr(_data['time']);
+    content += "<br>";
+    content += "Watch history: ";
+    content += '<a href="/api/' + _data['device_id'] + '">link</a>';
     content += "</div>";
     return content;
 }
