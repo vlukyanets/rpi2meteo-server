@@ -28,7 +28,7 @@ function timestampToUtcStr(_timestamp) {
 
 function makeContent(_data) {
     var content = "<div>";
-    content = "<h4>Device ID: ";
+    content += "<h4>Device ID: ";
     content += _data['device_id'];
     content += "</h4><br>";
     content += "<ul>";
